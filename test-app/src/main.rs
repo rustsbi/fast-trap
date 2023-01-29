@@ -77,11 +77,10 @@ extern "C" fn rust_main(_hartid: usize, dtb: *const u8) {
 
                 if name.starts_with("test") {
                     unsafe { TEST = parse_address(&name.as_bytes()[5..]) as _ };
-                } else if name.starts_with("uart") {
+                } else if name.starts_with("uart") || name.starts_with("serial") {
                     unsafe {
-                        UART = MaybeUninit::new(MmioSerialPort::new(parse_address(
-                            &name.as_bytes()[5..],
-                        )))
+                        let (_, addr) = name.as_str().unwrap().split_once('@').unwrap();
+                        UART = MaybeUninit::new(MmioSerialPort::new(parse_address(addr.as_bytes())))
                     };
                 }
                 WalkOperation::StepOver

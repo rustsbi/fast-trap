@@ -3,7 +3,11 @@ use core::arch::asm;
 
 macro_rules! exchange {
     () => {
-        "csrrw sp, sscratch, sp"
+        exchange!(sp)
+    };
+
+    ($reg:ident) => {
+        concat!("csrrw ", stringify!($reg), ", sscratch, ", stringify!($reg))
     };
 }
 

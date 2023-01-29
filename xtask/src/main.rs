@@ -140,11 +140,11 @@ impl QemuArgs {
             Arch::RISCV64(Mode::Supervisor) => ("riscv64", "-kernel"),
         };
         Qemu::system(arch)
-            .args(&["-machine", "virt"])
+            .args(["-machine", "virt"])
             .arg("-nographic")
             .arg(mode)
             .arg(objcopy(elf, true))
-            .args(&["-serial", "mon:stdio"])
+            .args(["-serial", "mon:stdio"])
             .optional(&self.gdb, |qemu, gdb| {
                 qemu.args(["-S", "-gdb", &format!("tcp::{gdb}")]);
             })
