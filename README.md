@@ -1,7 +1,9 @@
 ﻿# 快速陷入处理
 
 [![CI](https://github.com/YdrMaster/fast-trap/actions/workflows/workflow.yml/badge.svg?branch=main)](https://github.com/YdrMaster/fast-trap/actions)
+[![Latest version](https://img.shields.io/crates/v/fast-trap.svg)](https://crates.io/crates/fast-trap)
 [![issue](https://img.shields.io/github/issues/YdrMaster/fast-trap)](https://github.com/YdrMaster/fast-trap/issues)
+[![Documentation](https://docs.rs/fast-trap/badge.svg)](https://docs.rs/fast-trap)
 ![license](https://img.shields.io/github/license/YdrMaster/fast-trap)
 
 这个库提供一套裸机应用程序陷入处理流程的框架，旨在保证处理性能的同时尽量复用代码。
@@ -87,11 +89,7 @@ trap Lv.2              o------>o  o------>o
 
 突发寄存器保存着一个指针，同时这也是陷入发生的第一时间唯一可访问的动态数据。虽然任何静态的数据也都是可以找到和使用的，但出于内聚性考虑，将所有封装需要用到的东西打包放在一起是更好的选择。
 
-这个库将陷入栈设计成一个在地址空间上连续的内存块。当用户预期陷入将会发生之前（例如从内核切换到用户之前或打开中断之前），需要预先分配一个陷入栈对象，然后将其**加载**到突发寄存器。这样，一旦陷入发生，硬件就能在两个控制流之间转移。内存块可以用实现这个特质的类型表示：
-
-```rust
-trait TrapStackBlock: 'static + AsRef<[u8]> + AsMut<[u8]> {}
-```
+这个库将陷入栈设计成一个在地址空间上连续的内存块。当用户预期陷入将会发生之前（例如从内核切换到用户之前或打开中断之前），需要预先分配一个陷入栈对象，然后将其**加载**到突发寄存器。这样，一旦陷入发生，硬件就能在两个控制流之间转移。
 
 陷入栈内部分为 3 个部分，从高地址到低地址，分别是：
 
@@ -108,7 +106,8 @@ trait TrapStackBlock: 'static + AsRef<[u8]> + AsMut<[u8]> {}
 
 ```rust
 fn new(
-    block: impl TrapStackBlock,
+    range: Range<usize>,
+    drop: fn(Range<usize>),
     context_ptr: NonNull<FlowContext>,
     fast_handler: FastHandler,
 ) -> Result<Self, IllegalStack>
