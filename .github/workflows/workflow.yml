@@ -41,11 +41,9 @@ jobs:
           version: latest
 
       - name: Run rust-clippy
-        run:
-          cargo clippy
-          --target riscv64imac-unknown-none-elf
-          --package fast-trap
-          --message-format=json | clippy-sarif | tee rust-clippy-results.sarif | sarif-fmt
+        run: |
+          cargo clippy -p fast-trap --target riscv64imac-unknown-none-elf --features riscv-m --message-format=json | clippy-sarif | tee rust-clippy-results.sarif | sarif-fmt
+          cargo clippy -p fast-trap --target riscv64imac-unknown-none-elf --features riscv-s --message-format=json | clippy-sarif | tee rust-clippy-results.sarif | sarif-fmt
         continue-on-error: true
 
       - name: Upload analysis results to GitHub
