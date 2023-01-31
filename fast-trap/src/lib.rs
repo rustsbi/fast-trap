@@ -10,7 +10,7 @@ mod hal;
 
 pub use entire::*;
 pub use fast::*;
-pub use hal::*;
+pub use hal::{load_direct_trap_entry, reuse_stack_for_trap, soft_trap, trap_entry, FlowContext};
 
 use core::{
     alloc::Layout,
@@ -58,7 +58,7 @@ impl FreeTrapStack {
     /// 将这个陷入栈加载为预备陷入栈。
     #[inline]
     pub fn load(self) -> LoadedTrapStack {
-        let scratch = exchange_scratch(self.0.as_ptr() as _);
+        let scratch = hal::exchange_scratch(self.0.as_ptr() as _);
         forget(self);
         LoadedTrapStack(scratch)
     }
@@ -96,7 +96,7 @@ impl LoadedTrapStack {
     /// 间接复制了所有权。用于 `Drop`。
     #[inline]
     unsafe fn unload_unchecked(&self) -> FreeTrapStack {
-        let ptr = exchange_scratch(self.0) as *mut TrapHandler;
+        let ptr = hal::exchange_scratch(self.0) as *mut TrapHandler;
         let handler = unsafe { NonNull::new_unchecked(ptr) };
         FreeTrapStack(handler)
     }

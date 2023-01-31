@@ -16,7 +16,3 @@ categories = ["embedded", "hardware-support", "no-std"]
 [features]
 riscv-s = []
 riscv-m = []
-
-[package.metadata.docs.rs]
-targets = ["riscv32imac-unknown-none-elf", "riscv64imac-unknown-none-elf"]
-features = ["riscv-s", "riscv-m"]

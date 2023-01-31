@@ -1,5 +1,11 @@
-﻿use crate::TrapHandler;
-use core::alloc::Layout;
+﻿#![allow(missing_docs)]
+
+#[cfg(feature = "riscv-m")]
+#[macro_use]
+mod riscv_m;
+#[cfg(feature = "riscv-s")]
+#[macro_use]
+mod riscv_s;
 
 #[cfg(target_pointer_width = "32")]
 #[macro_use]
@@ -64,11 +70,14 @@ mod arch {
     }
 }
 
-use super::{exchange, r#return};
+use crate::TrapHandler;
+use core::alloc::Layout;
 
-/// 陷入上下文。
-///
-/// 保存了陷入时的寄存器状态。包括所有通用寄存器和 `pc`。
+#[cfg(feature = "riscv-m")]
+pub use riscv_m::*;
+#[cfg(feature = "riscv-s")]
+pub use riscv_s::*;
+
 #[repr(C)]
 #[allow(missing_docs)]
 pub struct FlowContext {
@@ -96,11 +105,9 @@ impl FlowContext {
     };
 }
 
-/// 把当前栈复用为陷入栈，预留 Handler 空间。
-///
 /// # Safety
 ///
-/// 裸指针，直接移动 sp，只能在纯汇编环境调用。
+/// See [proto](crate::hal::doc::reuse_stack_for_trap).
 #[naked]
 pub unsafe extern "C" fn reuse_stack_for_trap() {
     const LAYOUT: Layout = Layout::new::<TrapHandler>();
@@ -115,11 +122,9 @@ pub unsafe extern "C" fn reuse_stack_for_trap() {
     )
 }
 
-/// 陷入处理例程。
-///
 /// # Safety
 ///
-/// 不要直接调用这个函数。暴露它仅仅是为了提供其入口的符号链接。
+/// See [proto](crate::hal::doc::trap_entry).
 #[naked]
 pub unsafe extern "C" fn trap_entry() {
     core::arch::asm!(

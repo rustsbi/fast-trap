@@ -44,11 +44,9 @@ pub(crate) fn exchange_scratch(mut val: usize) -> usize {
     val
 }
 
-/// 模拟一个 `cause` 类的陷入。
-///
 /// # Safety
 ///
-/// 如同发生一个陷入。
+/// See [proto](crate::hal::doc::soft_trap).
 #[inline]
 pub unsafe fn soft_trap(cause: usize) {
     asm!(
@@ -64,11 +62,9 @@ pub unsafe fn soft_trap(cause: usize) {
     );
 }
 
-/// 设置全局陷入入口。
-///
 /// # Safety
 ///
-/// 这个函数操作硬件寄存器，寄存器里原本的值将丢弃。
+/// See [proto](crate::hal::doc::load_direct_trap_entry).
 #[inline]
 pub unsafe fn load_direct_trap_entry() {
     asm!("csrw mtvec, {0}", in(reg) trap_entry, options(nomem))
