@@ -1,7 +1,7 @@
 ﻿use crate::TrapHandler;
 use core::alloc::Layout;
 
-#[cfg(target_arch = "riscv32")]
+#[cfg(target_pointer_width = "32")]
 #[macro_use]
 mod arch {
     macro_rules! save {
@@ -32,7 +32,7 @@ mod arch {
         };
     }
 }
-#[cfg(target_arch = "riscv64")]
+#[cfg(target_pointer_width = "64")]
 #[macro_use]
 mod arch {
     macro_rules! save {
