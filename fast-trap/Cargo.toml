@@ -9,6 +9,3 @@ authors = ["YdrMaster <ydrml@hotmail.com>"]
 [features]
 riscv-s = []
 riscv-m = []
-
-[dependencies]
-log = "0.4.17"

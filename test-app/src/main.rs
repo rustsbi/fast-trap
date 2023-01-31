@@ -12,7 +12,7 @@ use core::{
 use dtb_walker::{Dtb, DtbObj, HeaderError, Str, WalkOperation};
 use fast_trap::{
     load_direct_trap_entry, reuse_stack_for_trap, soft_trap, trap_entry, FastContext, FastResult,
-    FlowContext, FreeTrapStack, TrapStackBlock,
+    FlowContext, FreeTrapStack,
 };
 use rcore_console::log;
 use riscv::register::*;
@@ -102,7 +102,8 @@ extern "C" fn rust_main(_hartid: usize, dtb: *const u8) {
 
     // 测试构造和释放
     let _ = FreeTrapStack::new(
-        StackRef(unsafe { &mut ROOT_STACK }),
+        unsafe { ROOT_STACK.range() },
+        |_| {},
         context_ptr,
         fast_handler,
     )
@@ -114,7 +115,8 @@ extern "C" fn rust_main(_hartid: usize, dtb: *const u8) {
 
     // 测试加载和卸载
     let _ = FreeTrapStack::new(
-        StackRef(unsafe { &mut ROOT_STACK }),
+        unsafe { ROOT_STACK.range() },
+        |_| {},
         context_ptr,
         fast_handler,
     )
@@ -127,7 +129,8 @@ extern "C" fn rust_main(_hartid: usize, dtb: *const u8) {
 
     // 加载一个新的陷入栈
     let loaded = FreeTrapStack::new(
-        StackRef(unsafe { &mut ROOT_STACK }),
+        unsafe { ROOT_STACK.range() },
+        |_| {},
         context_ptr,
         fast_handler,
     )
@@ -137,7 +140,8 @@ extern "C" fn rust_main(_hartid: usize, dtb: *const u8) {
     {
         // 叠加一个陷入栈用于临时保护
         let _loaded = FreeTrapStack::new(
-            StackRef(unsafe { &mut FREE_STACK }),
+            unsafe { FREE_STACK.range() },
+            |_| {},
             context_ptr,
             fast_handler,
         )
@@ -239,27 +243,10 @@ fn panic(info: &core::panic::PanicInfo) -> ! {
 #[repr(C, align(4096))]
 struct Stack([u8; 4096]);
 
-struct StackRef(&'static mut Stack);
-
-impl AsRef<[u8]> for StackRef {
-    #[inline]
-    fn as_ref(&self) -> &[u8] {
-        &self.0 .0
-    }
-}
-
-impl AsMut<[u8]> for StackRef {
-    #[inline]
-    fn as_mut(&mut self) -> &mut [u8] {
-        &mut self.0 .0
-    }
-}
-
-impl TrapStackBlock for StackRef {}
-
-impl Drop for StackRef {
-    fn drop(&mut self) {
-        log::info!("Stack Dropped!")
+impl Stack {
+    fn range(&self) -> core::ops::Range<usize> {
+        let ans = self.0.as_ptr_range();
+        ans.start as usize..ans.end as usize
     }
 }
 
