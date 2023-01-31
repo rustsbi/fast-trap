@@ -1,7 +1,7 @@
 [package]
 name = "fast-trap"
 description = "Provide a framework for bare-metal trap handling, aiming at ensuring performance while reusing code."
-version = "0.0.0"
+version = "0.0.1"
 edition = "2021"
 authors = ["YdrMaster <ydrml@hotmail.com>"]
 repository = "https://github.com/YdrMaster/fast-trap.git"
