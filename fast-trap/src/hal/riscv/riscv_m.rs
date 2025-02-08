@@ -1,4 +1,4 @@
-﻿use super::{trap_entry, FlowContext};
+use super::{FlowContext, trap_entry};
 use core::arch::asm;
 
 macro_rules! exchange {

@@ -2,3 +2,6 @@
 resolver = "3"
 members = ["xtask", "fast-trap", "test-app"]
 default-members = ["xtask"]
+
+[workspace.package]
+edition = "2024"

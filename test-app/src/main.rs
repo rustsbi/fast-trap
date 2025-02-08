@@ -5,14 +5,14 @@
 
 use core::{
     arch::asm,
-    mem::{forget, MaybeUninit},
-    ptr::{null, NonNull},
+    mem::{MaybeUninit, forget},
+    ptr::{NonNull, null},
     unreachable,
 };
 use dtb_walker::{Dtb, DtbObj, HeaderError, Str, WalkOperation};
 use fast_trap::{
-    load_direct_trap_entry, reuse_stack_for_trap, soft_trap, trap_entry, FastContext, FastResult,
-    FlowContext, FreeTrapStack,
+    FastContext, FastResult, FlowContext, FreeTrapStack, load_direct_trap_entry,
+    reuse_stack_for_trap, soft_trap, trap_entry,
 };
 use rcore_console::log;
 use riscv::register::*;
