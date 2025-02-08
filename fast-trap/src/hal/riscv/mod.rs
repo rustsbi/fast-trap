@@ -111,14 +111,13 @@ impl FlowContext {
 #[naked]
 pub unsafe extern "C" fn reuse_stack_for_trap() {
     const LAYOUT: Layout = Layout::new::<TrapHandler>();
-    core::arch::asm!(
+    core::arch::naked_asm!(
         "   addi sp, sp, {size}
             andi sp, sp, {mask}
             ret
         ",
         size = const -(LAYOUT.size() as isize),
         mask = const !(LAYOUT.align() as isize - 1) ,
-        options(noreturn)
     )
 }
 
@@ -127,7 +126,7 @@ pub unsafe extern "C" fn reuse_stack_for_trap() {
 /// See [proto](crate::hal::doc::trap_entry).
 #[naked]
 pub unsafe extern "C" fn trap_entry() {
-    core::arch::asm!(
+    core::arch::naked_asm!(
         ".align 2",
         // 换栈
         exchange!(),
@@ -242,6 +241,5 @@ pub unsafe extern "C" fn trap_entry() {
         load!(a1[ 9] => a1),
         exchange!(),
         r#return!(),
-        options(noreturn),
     )
 }
