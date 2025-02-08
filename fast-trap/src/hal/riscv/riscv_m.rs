@@ -23,17 +23,19 @@ impl FlowContext {
     /// 从上下文向硬件加载非调用规范约定的寄存器。
     #[inline]
     pub(crate) unsafe fn load_others(&self) {
-        asm!(
-            "   mv         gp, {gp}
+        unsafe {
+            asm!(
+                "   mv         gp, {gp}
                 mv         tp, {tp}
                 csrw mscratch, {sp}
                 csrw     mepc, {pc}
             ",
-            gp = in(reg) self.gp,
-            tp = in(reg) self.tp,
-            sp = in(reg) self.sp,
-            pc = in(reg) self.pc,
-        );
+                gp = in(reg) self.gp,
+                tp = in(reg) self.tp,
+                sp = in(reg) self.sp,
+                pc = in(reg) self.pc,
+            );
+        }
     }
 }
 
@@ -49,17 +51,19 @@ pub(crate) fn exchange_scratch(mut val: usize) -> usize {
 /// See [proto](crate::hal::doc::soft_trap).
 #[inline]
 pub unsafe fn soft_trap(cause: usize) {
-    asm!(
-        "   la   {0},    1f
+    unsafe {
+        asm!(
+            "   la   {0},    1f
             csrw mepc,   {0}
             csrw mcause, {cause}
             j    {trap}
          1:
         ",
-        out(reg) _,
-        cause = in(reg) cause,
-        trap  = sym trap_entry,
-    );
+            out(reg) _,
+            cause = in(reg) cause,
+            trap  = sym trap_entry,
+        );
+    }
 }
 
 /// # Safety
@@ -67,5 +71,5 @@ pub unsafe fn soft_trap(cause: usize) {
 /// See [proto](crate::hal::doc::load_direct_trap_entry).
 #[inline]
 pub unsafe fn load_direct_trap_entry() {
-    asm!("csrw mtvec, {0}", in(reg) trap_entry, options(nomem))
+    unsafe { asm!("csrw mtvec, {0}", in(reg) trap_entry, options(nomem)) }
 }

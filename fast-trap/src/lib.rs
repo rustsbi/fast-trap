@@ -1,7 +1,7 @@
 //! 快速陷入处理。
 
 #![no_std]
-#![feature(naked_functions, asm_const)]
+#![feature(naked_functions)]
 #![deny(warnings, missing_docs)]
 
 mod entire;
