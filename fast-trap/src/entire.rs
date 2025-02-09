@@ -1,7 +1,7 @@
-﻿use crate::{FlowContext, TrapHandler};
+use crate::{FlowContext, TrapHandler};
 use core::{
     marker::PhantomData,
-    mem::{forget, MaybeUninit},
+    mem::{MaybeUninit, forget},
     ops::{Deref, DerefMut},
     ptr::NonNull,
 };

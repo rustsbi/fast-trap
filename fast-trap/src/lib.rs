@@ -1,7 +1,7 @@
 //! 快速陷入处理。
 
 #![no_std]
-#![feature(naked_functions, asm_const)]
+#![feature(naked_functions)]
 #![deny(warnings, missing_docs)]
 
 mod entire;
@@ -10,12 +10,12 @@ mod hal;
 
 pub use entire::*;
 pub use fast::*;
-pub use hal::{load_direct_trap_entry, reuse_stack_for_trap, soft_trap, trap_entry, FlowContext};
+pub use hal::{FlowContext, load_direct_trap_entry, reuse_stack_for_trap, soft_trap, trap_entry};
 
 use core::{
     alloc::Layout,
     marker::PhantomPinned,
-    mem::{align_of, forget, MaybeUninit},
+    mem::{MaybeUninit, align_of, forget},
     ops::Range,
     ptr::NonNull,
 };
