@@ -1,10 +1,10 @@
 ﻿# 快速陷入处理
 
-[![CI](https://github.com/YdrMaster/fast-trap/actions/workflows/workflow.yml/badge.svg?branch=main)](https://github.com/YdrMaster/fast-trap/actions)
+[![CI](https://github.com/rustsbi/fast-trap/actions/workflows/workflow.yml/badge.svg?branch=main)](https://github.com/rustsbi/fast-trap/actions)
 [![Latest version](https://img.shields.io/crates/v/fast-trap.svg)](https://crates.io/crates/fast-trap)
-[![issue](https://img.shields.io/github/issues/YdrMaster/fast-trap)](https://github.com/YdrMaster/fast-trap/issues)
+[![issue](https://img.shields.io/github/issues/rustsbi/fast-trap)](https://github.com/rustsbi/fast-trap/issues)
 [![Documentation](https://docs.rs/fast-trap/badge.svg)](https://docs.rs/fast-trap)
-![license](https://img.shields.io/github/license/YdrMaster/fast-trap)
+![license](https://img.shields.io/github/license/rustsbi/fast-trap)
 
 这个库提供一套裸机应用程序陷入处理流程的框架，旨在保证处理性能的同时尽量复用代码。
 
@@ -311,7 +311,7 @@ trap Lv.2                                                     (trap3)-->{o}  (tr
 
 ## 设计解释
 
-- [为什么陷入必须换栈](https://github.com/YdrMaster/notebook/blob/main/%E9%9A%8F%E7%AC%94/20230130-trap-to-a-new-stack.md)
+- [为什么陷入必须换栈](https://github.com/rustsbi/notebook/blob/main/%E9%9A%8F%E7%AC%94/20230130-trap-to-a-new-stack.md)
 
 ## 使用说明
 
@@ -351,7 +351,7 @@ trap Lv.2                                                     (trap3)-->{o}  (tr
 
 ### 性能测试
 
-本项目现以 RISC-V64 M 模式用于 [rustsbi-qemu](https://github.com/YdrMaster/rustsbi-qemu) 和 [rustsbi-d1](https://github.com/rustsbi/rustsbi-d1)。这两个项目可以提供使用本库前后的性能对比。
+本项目现以 RISC-V64 M 模式用于 [rustsbi-qemu](https://github.com/rustsbi/rustsbi-qemu) 和 [rustsbi-d1](https://github.com/rustsbi/rustsbi-d1)。这两个项目可以提供使用本库前后的性能对比。
 
 #### qemu
 

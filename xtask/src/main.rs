@@ -2,15 +2,15 @@
 extern crate clap;
 
 use clap::Parser;
-use once_cell::sync::Lazy;
 use os_xtask_utils::{BinUtil, Cargo, CommandExt, Qemu};
 use std::{
     fs,
     path::{Path, PathBuf},
+    sync::LazyLock,
 };
 
-static PROJECT: Lazy<&'static Path> =
-    Lazy::new(|| Path::new(std::env!("CARGO_MANIFEST_DIR")).parent().unwrap());
+static PROJECT: LazyLock<&'static Path> =
+    LazyLock::new(|| Path::new(std::env!("CARGO_MANIFEST_DIR")).parent().unwrap());
 
 #[derive(Parser)]
 #[clap(name = "try-rtos")]

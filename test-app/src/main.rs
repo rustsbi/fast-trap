@@ -1,10 +1,10 @@
 #![no_std]
 #![no_main]
-#![feature(naked_functions, asm_const)]
+#![feature(naked_functions)]
 #![deny(warnings)]
 
 use core::{
-    arch::asm,
+    arch::{asm, naked_asm},
     mem::{MaybeUninit, forget},
     ptr::{NonNull, null},
     unreachable,
@@ -19,44 +19,45 @@ use riscv::register::*;
 use sifive_test_device::SifiveTestDevice;
 use uart_16550::MmioSerialPort;
 
-#[link_section = ".bss.uninit"]
+#[unsafe(link_section = ".bss.uninit")]
 static mut ROOT_STACK: Stack = Stack([0; 4096]);
 static mut FREE_STACK: Stack = Stack([0; 4096]);
 static mut ROOT_CONTEXT: FlowContext = FlowContext::ZERO;
 
 #[naked]
-#[no_mangle]
-#[link_section = ".text.entry"]
+#[unsafe(no_mangle)]
+#[unsafe(link_section = ".text.entry")]
 unsafe extern "C" fn _start() -> ! {
-    asm!(
-        "   la   sp, {stack} + {stack_size}
+    unsafe {
+        naked_asm!(
+            "   la   sp, {stack} + {stack_size}
             call {move_stack}
             call {main}
             j    {trap}
         ",
-        stack_size = const 4096,
-        stack      =   sym ROOT_STACK,
-        move_stack =   sym reuse_stack_for_trap,
-        main       =   sym rust_main,
-        trap       =   sym trap_entry,
-        options(noreturn),
-    )
+            stack_size = const 4096,
+            stack      =   sym ROOT_STACK,
+            move_stack =   sym reuse_stack_for_trap,
+            main       =   sym rust_main,
+            trap       =   sym trap_entry,
+        )
+    }
 }
 
 #[naked]
 unsafe extern "C" fn exception() -> ! {
-    asm!("unimp", options(noreturn),)
+    unsafe { naked_asm!("unimp") }
 }
 
 extern "C" fn rust_main(_hartid: usize, dtb: *const u8) {
     // 清零 bss 段
-    extern "C" {
+    unsafe extern "C" {
         static mut sbss: u64;
         static mut ebss: u64;
     }
     unsafe {
-        let mut ptr = (&mut sbss) as *mut u64;
-        let end = (&mut ebss) as *mut u64;
+        let mut ptr = &raw mut sbss;
+        let end = &raw mut ebss;
         while ptr < end {
             ptr.write_volatile(0);
             ptr = ptr.add(1);
@@ -79,7 +80,8 @@ extern "C" fn rust_main(_hartid: usize, dtb: *const u8) {
             } else if path.level() == 1 {
                 #[inline]
                 unsafe fn parse_address(str: &[u8]) -> usize {
-                    usize::from_str_radix(core::str::from_utf8_unchecked(str), 16).unwrap()
+                    usize::from_str_radix(unsafe { core::str::from_utf8_unchecked(str) }, 16)
+                        .unwrap()
                 }
 
                 if name.starts_with("test") {
@@ -105,7 +107,7 @@ extern "C" fn rust_main(_hartid: usize, dtb: *const u8) {
     mscratch::write(0x5050);
     #[cfg(feature = "s-mode")]
     sscratch::write(0x5050);
-    let context_ptr = unsafe { NonNull::new_unchecked(&mut ROOT_CONTEXT) };
+    let context_ptr = unsafe { NonNull::new_unchecked(&raw mut ROOT_CONTEXT) };
 
     // 测试构造和释放
     let _ = FreeTrapStack::new(
