@@ -1,6 +1,5 @@
 #![no_std]
 #![no_main]
-#![feature(naked_functions)]
 #![deny(warnings)]
 
 use core::{
@@ -24,7 +23,7 @@ static mut ROOT_STACK: Stack = Stack([0; 4096]);
 static mut FREE_STACK: Stack = Stack([0; 4096]);
 static mut ROOT_CONTEXT: FlowContext = FlowContext::ZERO;
 
-#[naked]
+#[unsafe(naked)]
 #[unsafe(no_mangle)]
 #[unsafe(link_section = ".text.entry")]
 unsafe extern "C" fn _start() -> ! {
@@ -44,7 +43,7 @@ unsafe extern "C" fn _start() -> ! {
     }
 }
 
-#[naked]
+#[unsafe(naked)]
 unsafe extern "C" fn exception() -> ! {
     unsafe { naked_asm!("unimp") }
 }
