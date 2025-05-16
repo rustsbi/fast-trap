@@ -108,7 +108,7 @@ impl FlowContext {
 /// # Safety
 ///
 /// See [proto](crate::hal::doc::reuse_stack_for_trap).
-#[naked]
+#[unsafe(naked)]
 pub unsafe extern "C" fn reuse_stack_for_trap() {
     const LAYOUT: Layout = Layout::new::<TrapHandler>();
     unsafe {
@@ -126,7 +126,7 @@ pub unsafe extern "C" fn reuse_stack_for_trap() {
 /// # Safety
 ///
 /// See [proto](crate::hal::doc::trap_entry).
-#[naked]
+#[unsafe(naked)]
 pub unsafe extern "C" fn trap_entry() {
     unsafe {
         core::arch::naked_asm!(
