@@ -1,6 +1,7 @@
 #![no_std]
 #![no_main]
 #![deny(warnings)]
+#![allow(static_mut_refs)]
 
 use core::{
     arch::{asm, naked_asm},
