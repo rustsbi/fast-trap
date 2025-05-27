@@ -1,6 +1,7 @@
 #![no_std]
 #![no_main]
 #![deny(warnings)]
+#![allow(static_mut_refs)]
 
 use core::{
     arch::{asm, naked_asm},
@@ -27,25 +28,23 @@ static mut ROOT_CONTEXT: FlowContext = FlowContext::ZERO;
 #[unsafe(no_mangle)]
 #[unsafe(link_section = ".text.entry")]
 unsafe extern "C" fn _start() -> ! {
-    unsafe {
-        naked_asm!(
-            "   la   sp, {stack} + {stack_size}
+    naked_asm!(
+        "   la   sp, {stack} + {stack_size}
             call {move_stack}
             call {main}
             j    {trap}
         ",
-            stack_size = const 4096,
-            stack      =   sym ROOT_STACK,
-            move_stack =   sym reuse_stack_for_trap,
-            main       =   sym rust_main,
-            trap       =   sym trap_entry,
-        )
-    }
+        stack_size = const 4096,
+        stack      =   sym ROOT_STACK,
+        move_stack =   sym reuse_stack_for_trap,
+        main       =   sym rust_main,
+        trap       =   sym trap_entry,
+    )
 }
 
 #[unsafe(naked)]
 unsafe extern "C" fn exception() -> ! {
-    unsafe { naked_asm!("unimp") }
+    naked_asm!("unimp")
 }
 
 extern "C" fn rust_main(_hartid: usize, dtb: *const u8) {
