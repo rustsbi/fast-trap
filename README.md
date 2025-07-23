@@ -311,7 +311,7 @@ trap Lv.2                                                     (trap3)-->{o}  (tr
 
 ## 设计解释
 
-- [为什么陷入必须换栈](https://github.com/rustsbi/notebook/blob/main/%E9%9A%8F%E7%AC%94/20230130-trap-to-a-new-stack.md)
+- [为什么陷入必须换栈](https://github.com/YdrMaster/notebook/blob/main/%E9%9A%8F%E7%AC%94/20230130-trap-to-a-new-stack.md)
 
 ## 使用说明
 
