@@ -113,7 +113,7 @@ fn new(
 ) -> Result<Self, IllegalStack>
 ```
 
-- `block` 是用作栈的内存块；
+- `range` 是用作栈的内存块；
 - `context_ptr` 是用于保存控制流上下文（通用寄存器）的对象指针，用户需要自己控制其生命周期；
 - `fast_handler` 是快速路径函数，一个 `extern "C"` 的函数指针，将由汇编调用；
 
